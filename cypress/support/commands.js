@@ -23,3 +23,38 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+import Drag from '../support/pageObjects/gradAndDrop.js'
+const dataTransfer = new DataTransfer;
+
+Cypress.Commands.add("dragAndDropElement", () => {
+    const dragNdrop = new Drag()
+    
+    cy.visit('/drag_and_drop')
+    dragNdrop.getA().should('be.visible')
+    dragNdrop.getA().then(($headerText)=> {
+        const text = $headerText.text()
+        cy.log(text)
+        expect(text).to.not.eq('B')
+        expect(text).to.eq('A')
+
+    })
+
+    dragNdrop.getA()
+    .trigger('dragstart', { dataTransfer })
+
+    dragNdrop.getB()
+    .trigger('drop', { dataTransfer })
+
+    dragNdrop.getA()
+    .trigger('dragend').should('be.visible')
+
+    dragNdrop.getA()
+    .trigger('dragend').then(($headerTextA) =>{
+        const textA = $headerTextA.text()
+        cy.log(textA)
+        expect(textA).to.eq('B')
+        expect(textA).to.not.eq('A')
+    })
+    
+})

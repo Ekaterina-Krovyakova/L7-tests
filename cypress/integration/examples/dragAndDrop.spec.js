@@ -16,6 +16,8 @@ describe('Drag And Drop', () => {
             const text = $headerText.text()
             cy.log(text)
             expect(text).to.not.eq('B')
+            expect(text).to.eq('A')
+
         })
 
         cy.get('#column-a')
@@ -33,6 +35,12 @@ describe('Drag And Drop', () => {
             cy.log(textA)
             expect(textA).to.eq('B')
         })
+        
+    })
+
+    it('Should Drag And Drop Boxes from custom commands', () => {
+
+        cy.dragAndDropElement()
         
     })
   
