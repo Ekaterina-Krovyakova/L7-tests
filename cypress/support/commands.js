@@ -24,37 +24,55 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-import Drag from '../support/pageObjects/gradAndDrop.js'
+
 const dataTransfer = new DataTransfer;
 
-Cypress.Commands.add("dragAndDropElement", () => {
-    const dragNdrop = new Drag()
+Cypress.Commands.add("visitDragNDrop", () => {
     
     cy.visit('/drag_and_drop')
-    dragNdrop.getA().should('be.visible')
-    dragNdrop.getA().then(($headerText)=> {
+
+})
+
+Cypress.Commands.add("getSource", (element) => {
+
+    return cy.get(element)
+})
+
+Cypress.Commands.add("getTarget", (element) => {
+
+    return cy.get(element)
+})
+
+Cypress.Commands.add("getHeader", (element) => {
+
+    return cy.get(element)
+})
+
+
+Cypress.Commands.add("assertDtragNDrop", (source) => {
+
+    cy.get(source).then(($headerText)=> {
         const text = $headerText.text()
-        cy.log(text)
-        expect(text).to.not.eq('B')
-        expect(text).to.eq('A')
-
+        expect(text).to.eq(text)
     })
+})
 
-    dragNdrop.getA()
+Cypress.Commands.add("dragAndDropElement", (sourceSelector, targetSelector) => {
+    
+    
+    cy.getSource(sourceSelector).should('be.visible')
+
+    cy.assertDtragNDrop(sourceSelector)
+
+    cy.getSource(sourceSelector)
     .trigger('dragstart', { dataTransfer })
 
-    dragNdrop.getB()
+    cy.getTarget(targetSelector)
     .trigger('drop', { dataTransfer })
 
-    dragNdrop.getA()
+    cy.getSource(sourceSelector)
     .trigger('dragend').should('be.visible')
 
-    dragNdrop.getA()
-    .trigger('dragend').then(($headerTextA) =>{
-        const textA = $headerTextA.text()
-        cy.log(textA)
-        expect(textA).to.eq('B')
-        expect(textA).to.not.eq('A')
-    })
+    cy.assertDtragNDrop(sourceSelector)
     
 })

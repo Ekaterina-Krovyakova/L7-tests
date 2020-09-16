@@ -1,46 +1,45 @@
 describe('Drag And Drop', () => {
 
     const dataTransfer = new DataTransfer;
+    const source = '#column-a'
+    const target = '#column-b'
+    const header = 'h3'
   
-    before('Header check', () => {
-      cy.visit('/drag_and_drop')
-      cy.get('h3').contains('Drag and Drop')
+    beforeEach('Header check', () => {
+      cy.visitDragNDrop()
+      cy.get(header).contains('Drag and Drop')
   
     })
   
+    it('Should Drag And Drop Boxes from custom commands', () => {
+
+        cy.dragAndDropElement(source, target)
+
+    })
     
     it('Should Drag And Drop Boxes', () => {
 
-        cy.get('#column-a').should('be.visible')
-        cy.get('#column-a > header').then(($headerText)=> {
+        cy.get(source).should('be.visible')
+        cy.get(source).then(($headerText)=> {
             const text = $headerText.text()
-            cy.log(text)
-            expect(text).to.not.eq('B')
-            expect(text).to.eq('A')
+            expect(text).to.eq(text)
 
         })
 
-        cy.get('#column-a')
+        cy.get(source)
         .trigger('dragstart', { dataTransfer })
 
-        cy.get('#column-b')
+        cy.get(target)
         .trigger('drop', { dataTransfer })
 
-        cy.get('#column-a')
+        cy.get(source)
         .trigger('dragend').should('be.visible')
 
-        cy.get('#column-a')
+        cy.get(source)
         .trigger('dragend').then(($headerTextA) =>{
             const textA = $headerTextA.text()
-            cy.log(textA)
-            expect(textA).to.eq('B')
+            expect(textA).to.eq(textA)
         })
-        
-    })
-
-    it('Should Drag And Drop Boxes from custom commands', () => {
-
-        cy.dragAndDropElement()
         
     })
   
