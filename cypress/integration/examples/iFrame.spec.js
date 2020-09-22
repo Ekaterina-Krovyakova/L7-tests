@@ -1,16 +1,20 @@
-describe('iframe', () => {
+describe('iframe', () =>{
   
     const header = 'h3'
     const iframeId = '#mce_0_ifr'
     const page = '/iframe'
 
-    beforeEach('Header check', () => {
+    beforeEach('Header check', function (){
         cy.visit(page)
         cy.get(header).contains('An iFrame containing the TinyMCE WYSIWYG Editor')
+        cy.fixture('example')
+        .then((data) => {
+            this.data = data
+        })
     
       })
   
-    it('iframe - type in body', () => {
+    it('iframe - type in body', function () {
 
         cy.get(iframeId).then(($iframe)=>{
         
@@ -24,7 +28,7 @@ describe('iframe', () => {
 
     })
 
-    it('iframe - type in body from fixture file', () => {
+    it('iframe - type in body from fixture file', function () {
 
         cy.fixture('example.json').then((data)=> {
             cy.wrap(data.bodyText).as('dataSource')
@@ -41,6 +45,20 @@ describe('iframe', () => {
 
                 })
             })
+    })
+
+    it('iframe - type in simple manner with fixture', function () {
+        
+            cy.get(iframeId).then( function($iframe) {
+        
+                const iframeContent = $iframe.contents().find('body')
+
+                cy.wrap(iframeContent)
+                .clear()
+                .type(this.data.bodyText)
+
+                })
+
     })
 
 })
